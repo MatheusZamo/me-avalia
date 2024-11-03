@@ -1,21 +1,27 @@
-import { useState } from "react"
-// const APIKey = "360e928c"
-// fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${APIKey}`)
-//fetch(`http://www.omdbapi.com/?s=Batman&apikey=360e928c`)
-//[{ Title, Poster, Year, imdbID }]
+import { useState, useEffect } from "react"
 
 const App = () => {
-  const [movies, setMovies] = useState([])
+  const [movies, setMovies] = useState([{}])
 
-  fetch(`http://www.omdbapi.com/?s=Batman&apikey=360e928c`)
-    .then((response) => response.json())
-    .then((response) => console.log(response))
-  // .then((response) => {
-  //   const [{ Title, Poster, Year, imdbID }] = response.Search
+  const APIKey = "360e928c"
 
-  //   console.log(Year)
-  // })
-  // .catch(console.log)
+  useEffect(() => {
+    fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=harry-potter`)
+      .then((response) => response.json())
+      .then((response) => {
+        const data = response.Search
+
+        setMovies(
+          data.map(({ Title, Poster, Year, imdbID }) => ({
+            Title,
+            Poster,
+            Year,
+            imdbID,
+          })),
+        )
+      })
+      .catch(console.log)
+  }, [])
 
   return (
     <>
@@ -38,13 +44,13 @@ const App = () => {
           <ul className="list">
             <button className="btn-toggle">-</button>
 
-            {/* {movies.map(({ Title, Poster, Year, imdbID }) => (
+            {movies.map(({ Title, Poster, Year, imdbID }) => (
               <li className="list-movies" key={imdbID}>
                 <img src={Poster} alt="" />
                 <h3>{Title}</h3>
                 <p>🗓️ {Year}</p>
               </li>
-            ))} */}
+            ))}
           </ul>
         </div>
         <div className="box">
