@@ -1,7 +1,7 @@
-const APIKey = "360e928c"
+// const APIKey = "360e928c"
+// fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=${APIKey}`)
 
-//
-fetch(`http://www.omdbapi.com/?apikey=${APIKey}`)
+fetch(`http://www.omdbapi.com/?i=tt3896198&apikey=360e928c`)
   .then((response) => response.json())
   .then((response) => console.log(response))
   .catch(console.log)
