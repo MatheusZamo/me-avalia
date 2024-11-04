@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 
 const App = () => {
   const [movies, setMovies] = useState([{}])
+  const [inputValue, setInputValue] = useState("")
 
   const APIKey = "360e928c"
 
@@ -21,7 +22,41 @@ const App = () => {
         )
       })
       .catch(console.log)
+
+    return () => setMovies()
   }, [])
+
+  useEffect(() => {
+    console.log(movies === true)
+    if (!movies) {
+      return
+    }
+
+    const id = setTimeout(() => {
+      fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=${inputValue}`)
+        .then((response) => response.json())
+        .then((response) => {
+          const data = response.Search
+
+          setMovies(
+            data.map(({ Title, Poster, Year, imdbID }) => ({
+              Title,
+              Poster,
+              Year,
+              imdbID,
+            })),
+          )
+        })
+        .catch(console.log)
+    }, 500)
+
+    return () => clearInterval(id)
+  }, [inputValue])
+
+  const handleSearchMovie = (e) => {
+    e.preventDefault()
+    setInputValue(e.target.value)
+  }
 
   return (
     <>
@@ -32,11 +67,13 @@ const App = () => {
             className="search"
             type="text"
             placeholder="Buscar filmes..."
+            onChange={handleSearchMovie}
+            value={inputValue}
           />
           <button className="btn-search">Buscar</button>
         </form>
         <p className="num-results">
-          {movies.length} {movies.length < 2 ? "Resultado" : "Resultados"}
+          {movies?.length} {movies?.length < 2 ? "Resultado" : "Resultados"}
         </p>
       </nav>
       <main className="main">
@@ -44,7 +81,7 @@ const App = () => {
           <ul className="list">
             <button className="btn-toggle">-</button>
 
-            {movies.map(({ Title, Poster, Year, imdbID }) => (
+            {movies?.map(({ Title, Poster, Year, imdbID }) => (
               <li className="list-movies" key={imdbID}>
                 <img src={Poster} alt="" />
                 <h3>{Title}</h3>
