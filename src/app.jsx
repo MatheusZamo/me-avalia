@@ -3,9 +3,15 @@ import { useState, useEffect } from "react"
 const App = () => {
   const [movies, setMovies] = useState([{}])
   const [inputValue, setInputValue] = useState("")
+  const [selectedMovie, setSelectedMovie] = useState([])
+  const [showDetails, setShowDetails] = useState(false)
+  const [movieDetails, setMoviesDetails] = useState({})
 
   const APIKey = "360e928c"
 
+  //fetch(`http://www.omdbapi.com/?apikey=${APIKey}&i=tt0304141`) request para o filme clickado
+
+  // Request para a lista inicial
   useEffect(() => {
     fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=harry-potter`)
       .then((response) => response.json())
@@ -26,8 +32,8 @@ const App = () => {
     return () => setMovies()
   }, [])
 
+  //Requests de acordo com a mudança do input
   useEffect(() => {
-    console.log(movies === true)
     if (!movies) {
       return
     }
@@ -53,10 +59,25 @@ const App = () => {
     return () => clearInterval(id)
   }, [inputValue])
 
+  //Request com todos os detalhes do filme
+  useEffect(() => {
+    fetch(`http://www.omdbapi.com/?apikey=${APIKey}&i=${selectedMovie.imdbID}`)
+      .then((response) => response.json())
+      .then((response) => setMoviesDetails(response))
+      .catch(console.log)
+  }, [selectedMovie])
+
   const handleSearchMovie = (e) => {
     e.preventDefault()
     setInputValue(e.target.value)
   }
+
+  const handleClickGetId = (e) => {
+    const movie = movies.filter((movie) => movie.imdbID === e)
+    setSelectedMovie(movie[0])
+    setShowDetails(true)
+  }
+  const handleClickBack = () => setShowDetails(false)
 
   return (
     <>
@@ -82,7 +103,11 @@ const App = () => {
             <button className="btn-toggle">-</button>
 
             {movies?.map(({ Title, Poster, Year, imdbID }) => (
-              <li className="list-movies" key={imdbID}>
+              <li
+                className="list-movies"
+                key={imdbID}
+                onClick={() => handleClickGetId(imdbID)}
+              >
                 <img src={Poster} alt="" />
                 <h3>{Title}</h3>
                 <p>🗓️ {Year}</p>
@@ -91,14 +116,46 @@ const App = () => {
           </ul>
         </div>
         <div className="box">
-          <div className="summary">
-            <h2>Filmes Assistidos</h2>
-            <div>
-              <p>🎬 0 filmes</p>
-              <p>⏳ 0 min</p>
+          {!showDetails && (
+            <div className="summary">
+              <h2>Filmes Assistidos</h2>
+              <div>
+                <p>🎬 0 filmes</p>
+                <p>⏳ 0 min</p>
+              </div>
+              <button className="btn-toggle">-</button>
             </div>
-            <button className="btn-toggle">-</button>
-          </div>
+          )}
+
+          {showDetails && (
+            <div className="details">
+              <header>
+                <button className="btn-back" onClick={handleClickBack}>
+                  &larr;
+                </button>
+                <img src={movieDetails.Poster} alt={`Poster de`} />
+                <div className="details-overview">
+                  <h2>{movieDetails.Title}</h2>
+                  <p>
+                    {movieDetails.Released} &bull; {movieDetails.Runtime}
+                  </p>
+                  <p>{movieDetails.Genre}</p>
+                  <p>
+                    <span>⭐️ </span>
+                    {movieDetails.imdbRating} IMDb rating
+                  </p>
+                </div>
+              </header>
+              <section>
+                <p>
+                  <em>{movieDetails.Plot}</em>
+                </p>
+                <p>Elenco: {movieDetails.Actors}</p>
+                <p>Direção: {movieDetails.Director}</p>
+              </section>
+            </div>
+          )}
+
           <ul className="list">{/* <li className="list-watched"></li> */}</ul>
         </div>
       </main>
