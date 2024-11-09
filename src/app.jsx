@@ -2,7 +2,7 @@ import { useState, useEffect } from "react"
 
 const getTotalMinutes = (watchedMovies) =>
   watchedMovies.reduce(
-    (accumulator, item) => accumulator + +item.runtime.split("")[0],
+    (accumulator, item) => accumulator + +item.runtime.split(" ")[0],
     0,
   )
 
@@ -17,7 +17,9 @@ const App = () => {
 
   // Request para a lista inicial
   useEffect(() => {
-    fetch(`http://www.omdbapi.com/?apikey=${APIKey}&i=tt0304141`)
+    fetch(
+      `https://raw.githubusercontent.com/MatheusZamo/Me-Avalia/refs/heads/main/fake-data.json`,
+    )
       .then((response) => response.json())
       .then((data) =>
         setMovies(
@@ -42,36 +44,36 @@ const App = () => {
   }, [])
 
   //Requests de acordo com a mudança do input
-  useEffect(() => {
-    if (!movies) {
-      return
-    }
+  // useEffect(() => {
+  //   if (!movies) {
+  //     return
+  //   }
 
-    const id = setTimeout(() => {
-      fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=${inputValue}`)
-        .then((response) => response.json())
-        .then((data) =>
-          setMovies(
-            data.map((movie) => ({
-              id: movie.imdbID,
-              title: movie.Title,
-              year: movie.Year,
-              imdbRating: movie.imdbRating,
-              runtime: movie.Runtime,
-              poster: movie.Poster,
-              plot: movie.Plot,
-              actors: movie.Actors,
-              director: movie.Director,
-              released: movie.Released,
-              genre: movie.Genre,
-            })),
-          ),
-        )
-        .catch(console.log)
-    }, 500)
+  //   const id = setTimeout(() => {
+  //     fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=${inputValue}`)
+  //       .then((response) => response.json())
+  //       .then((data) =>
+  //         setMovies(
+  //           data.map((movie) => ({
+  //             id: movie.imdbID,
+  //             title: movie.Title,
+  //             year: movie.Year,
+  //             imdbRating: movie.imdbRating,
+  //             runtime: movie.Runtime,
+  //             poster: movie.Poster,
+  //             plot: movie.Plot,
+  //             actors: movie.Actors,
+  //             director: movie.Director,
+  //             released: movie.Released,
+  //             genre: movie.Genre,
+  //           })),
+  //         ),
+  //       )
+  //       .catch(console.log)
+  //   }, 500)
 
-    return () => clearInterval(id)
-  }, [inputValue])
+  //   return () => clearInterval(id)
+  // }, [inputValue])
 
   const handleSearchMovie = (e) => {
     e.preventDefault()
@@ -119,20 +121,16 @@ const App = () => {
       </nav>
       <main className="main">
         <div className="box">
-          <ul className="list">
+          <ul className="list list-movies">
             <button className="btn-toggle">-</button>
 
             {movies?.map((movie) => (
-              <li
-                className="list-movies"
-                key={movie.imdbID}
-                onClick={() => handleClickMovie(movie)}
-              >
-                <img src={movie.Poster} alt="" />
-                <h3>{movie.Title}</h3>
+              <li key={movie.id} onClick={() => handleClickMovie(movie)}>
+                <img src={movie.poster} alt="" />
+                <h3>{movie.title}</h3>
                 <p>
                   <span>🗓️</span>
-                  <span>{movie.Year}</span>{" "}
+                  <span>{movie.year}</span>{" "}
                 </p>
               </li>
             ))}
@@ -145,13 +143,13 @@ const App = () => {
                 <button className="btn-back" onClick={handleClickBtnBack}>
                   &larr;
                 </button>
-                <img src={clickedMovie.Poster} alt={`Poster de`} />
+                <img src={clickedMovie.poster} alt={`Poster de`} />
                 <div className="details-overview">
-                  <h2>{clickedMovie.Title}</h2>
+                  <h2>{clickedMovie.title}</h2>
                   <p>
-                    {clickedMovie.Released} &bull; {clickedMovie.Runtime}
+                    {clickedMovie.released} &bull; {clickedMovie.runtime}
                   </p>
-                  <p>{clickedMovie.Genre}</p>
+                  <p>{clickedMovie.genre}</p>
                   <p>
                     <span>⭐️ </span>
                     {clickedMovie.imdbRating} IMDb rating
@@ -175,57 +173,58 @@ const App = () => {
                   </form>
                 </div>
                 <p>
-                  <em>{clickedMovie.Plot}</em>
+                  <em>{clickedMovie.plot}</em>
                 </p>
-                <p>Elenco: {clickedMovie.Actors}</p>
-                <p>Direção: {clickedMovie.Director}</p>
+                <p>Elenco: {clickedMovie.actors}</p>
+                <p>Direção: {clickedMovie.director}</p>
               </section>
             </div>
           ) : (
-            <div className="summary">
-              <h2>Hístorico</h2>
-              <div>
-                <p>
-                  <span>🎬</span>
-                  <span>{watchedMovies.length} filmes</span>
-                </p>
-                <p>
-                  <span>⏳</span>
-                  <span>{getTotalMinutes(watchedMovies)} min</span>
-                </p>
-              </div>
-              <button className="btn-toggle">-</button>
-            </div>
-          )}
-
-          <ul className="list">
-            {watchedMovies.map((movie) => (
-              <li key={movie.id}>
-                <img src={movie.poster} alt={`Poster de ${movie.title}`} />
-                <h3>{movie.title}</h3>
+            <>
+              <div className="summary">
+                <h2>Hístorico</h2>
                 <div>
                   <p>
-                    <span>⭐️</span>
-                    <span>{movie.imdbRating}</span>
-                  </p>
-                  <p>
-                    <span>⭐️</span>
-                    <span>{movie.userRating}</span>
+                    <span>🎬</span>
+                    <span>{watchedMovies.length} filmes</span>
                   </p>
                   <p>
                     <span>⏳</span>
-                    <span>{movie.runtime}</span>
+                    <span>{getTotalMinutes(watchedMovies)} min</span>
                   </p>
-                  <button
-                    className="btn-delete"
-                    onClick={() => handleCLickBtnDelete(movie.id)}
-                  >
-                    X
-                  </button>
                 </div>
-              </li>
-            ))}
-          </ul>
+                <button className="btn-toggle">-</button>
+              </div>
+              <ul className="list">
+                {watchedMovies.map((movie) => (
+                  <li key={movie.id}>
+                    <img src={movie.poster} alt={`Poster de ${movie.title}`} />
+                    <h3>{movie.title}</h3>
+                    <div>
+                      <p>
+                        <span>⭐️</span>
+                        <span>{movie.imdbRating}</span>
+                      </p>
+                      <p>
+                        <span>⭐️</span>
+                        <span>{movie.userRating}</span>
+                      </p>
+                      <p>
+                        <span>⏳</span>
+                        <span>{movie.runtime}</span>
+                      </p>
+                      <button
+                        className="btn-delete"
+                        onClick={() => handleCLickBtnDelete(movie.id)}
+                      >
+                        X
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </div>
       </main>
     </>
