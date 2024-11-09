@@ -1,0 +1,106 @@
+[
+  {
+    "Title": "Harry Potter and the Prisoner of Azkaban",
+    "Year": "2004",
+    "Rated": "PG",
+    "Released": "04 Jun 2004",
+    "Runtime": "142 min",
+    "Genre": "Adventure, Family, Fantasy",
+    "Director": "Alfonso Cuarón",
+    "Writer": "J.K. Rowling, Steve Kloves",
+    "Actors": "Daniel Radcliffe, Emma Watson, Rupert Grint",
+    "Plot": "Harry Potter, Ron and Hermione return to Hogwarts School of Witchcraft and Wizardry for their third year of study, where they delve into the mystery surrounding an escaped prisoner who poses a dangerous threat to the young wizard.",
+    "Language": "English, Latin, Old English",
+    "Country": "United Kingdom, United States",
+    "Awards": "Nominated for 2 Oscars. 17 wins & 56 nominations total",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BMTY4NTIwODg0N15BMl5BanBnXkFtZTcwOTc0MjEzMw@@._V1_SX300.jpg",
+    "Ratings": [
+      {
+        "Source": "Internet Movie Database",
+        "Value": "7.9/10"
+      },
+      {
+        "Source": "Rotten Tomatoes",
+        "Value": "90%"
+      },
+      {
+        "Source": "Metacritic",
+        "Value": "82/100"
+      }
+    ],
+    "Metascore": "82",
+    "imdbRating": "7.9",
+    "imdbVotes": "708,347",
+    "imdbID": "tt0304141",
+    "Type": "movie",
+    "DVD": "N/A",
+    "BoxOffice": "$250,105,651",
+    "Production": "N/A",
+    "Website": "N/A",
+    "Response": "True"
+  },
+  {
+    "Title": "Harry Potter and the Sorcerer's Stone",
+    "Year": "2001",
+    "Rated": "E",
+    "Released": "16 Nov 2001",
+    "Runtime": "N/A",
+    "Genre": "Action, Adventure, Fantasy",
+    "Director": "N/A",
+    "Writer": "Lisa Singer Haese (contributing writer), Michael Humes, Nuno Miranda (adaptation), Nuno Miranda (translation), J.K. Rowling (characters and universe)",
+    "Actors": "Gregg Chillin, David Coker, Allan Corduner, Chris Crosby",
+    "Plot": "Video game adaptation of the first Harry Potter novel from J.K. Rowling's popular boy-wizard series.",
+    "Language": "English",
+    "Country": "USA",
+    "Awards": "1 nomination.",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BZjQwZWQyZGItMjBjMy00ODA2LTk3NDItYTcxYWQ1NjMyNDc3XkEyXkFqcGdeQXVyNTEwNDY2MjU@._V1_SX300.jpg",
+    "Ratings": [
+      {
+        "Source": "Internet Movie Database",
+        "Value": "7.3/10"
+      }
+    ],
+    "Metascore": "N/A",
+    "imdbRating": "7.3",
+    "imdbVotes": "1,172",
+    "imdbID": "tt0304142",
+    "Type": "game",
+    "DVD": "N/A",
+    "BoxOffice": "N/A",
+    "Production": "N/A",
+    "Website": "N/A",
+    "Response": "True"
+  },
+  {
+    "Title": "Drei Frauen, ein Plan und die ganz große Kohle",
+    "Year": "2002",
+    "Rated": "N/A",
+    "Released": "30 Apr 2002",
+    "Runtime": "92 min",
+    "Genre": "Comedy, Crime",
+    "Director": "Reinhard Schwabenitzky",
+    "Writer": "Olaf Kraemer, Iris Uhlenbruch",
+    "Actors": "Tina Ruland, Marco Rima, Elfi Eschke",
+    "Plot": "A money transport robbery changes the lives of three ladies decisively.",
+    "Language": "German",
+    "Country": "Germany",
+    "Awards": "N/A",
+    "Poster": "https://m.media-amazon.com/images/M/MV5BNjM4ZWYyN2MtODI3NS00NDgwLWE0MWItYjBhNjRjNzRmM2I3XkEyXkFqcGdeQXVyNjE4MjY2MDg@._V1_SX300.jpg",
+    "Ratings": [
+      {
+        "Source": "Internet Movie Database",
+        "Value": "6.5/10"
+      }
+    ],
+    "Metascore": "N/A",
+    "imdbRating": "6.5",
+    "imdbVotes": "29",
+    "imdbID": "tt0304146",
+    "Type": "movie",
+    "DVD": "N/A",
+    "BoxOffice": "N/A",
+    "Production": "N/A",
+    "Website": "N/A",
+    "Response": "True"
+  }
+]

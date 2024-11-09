@@ -1,32 +1,41 @@
 import { useState, useEffect } from "react"
 
+const getTotalMinutes = (watchedMovies) =>
+  watchedMovies.reduce(
+    (accumulator, item) => accumulator + +item.runtime.split("")[0],
+    0,
+  )
+
 const App = () => {
-  const [movies, setMovies] = useState([{}])
+  const [movies, setMovies] = useState([])
+  const [clickedMovie, setClickedMovie] = useState(null)
+  const [watchedMovies, setWatchedMovies] = useState([])
+
   const [inputValue, setInputValue] = useState("")
-  const [selectedMovie, setSelectedMovie] = useState([])
-  const [showDetails, setShowDetails] = useState(false)
-  const [movieDetails, setMoviesDetails] = useState({})
 
   const APIKey = "360e928c"
 
-  //fetch(`http://www.omdbapi.com/?apikey=${APIKey}&i=tt0304141`) request para o filme clickado
-
   // Request para a lista inicial
   useEffect(() => {
-    fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=harry-potter`)
+    fetch(`http://www.omdbapi.com/?apikey=${APIKey}&i=tt0304141`)
       .then((response) => response.json())
-      .then((response) => {
-        const data = response.Search
-
+      .then((data) =>
         setMovies(
-          data.map(({ Title, Poster, Year, imdbID }) => ({
-            Title,
-            Poster,
-            Year,
-            imdbID,
+          data.map((movie) => ({
+            id: movie.imdbID,
+            title: movie.Title,
+            year: movie.Year,
+            imdbRating: movie.imdbRating,
+            runtime: movie.Runtime,
+            poster: movie.Poster,
+            plot: movie.Plot,
+            actors: movie.Actors,
+            director: movie.Director,
+            released: movie.Released,
+            genre: movie.Genre,
           })),
-        )
-      })
+        ),
+      )
       .catch(console.log)
 
     return () => setMovies()
@@ -41,43 +50,53 @@ const App = () => {
     const id = setTimeout(() => {
       fetch(`http://www.omdbapi.com/?apikey=${APIKey}&s=${inputValue}`)
         .then((response) => response.json())
-        .then((response) => {
-          const data = response.Search
-
+        .then((data) =>
           setMovies(
-            data.map(({ Title, Poster, Year, imdbID }) => ({
-              Title,
-              Poster,
-              Year,
-              imdbID,
+            data.map((movie) => ({
+              id: movie.imdbID,
+              title: movie.Title,
+              year: movie.Year,
+              imdbRating: movie.imdbRating,
+              runtime: movie.Runtime,
+              poster: movie.Poster,
+              plot: movie.Plot,
+              actors: movie.Actors,
+              director: movie.Director,
+              released: movie.Released,
+              genre: movie.Genre,
             })),
-          )
-        })
+          ),
+        )
         .catch(console.log)
     }, 500)
 
     return () => clearInterval(id)
   }, [inputValue])
 
-  //Request com todos os detalhes do filme
-  useEffect(() => {
-    fetch(`http://www.omdbapi.com/?apikey=${APIKey}&i=${selectedMovie.imdbID}`)
-      .then((response) => response.json())
-      .then((response) => setMoviesDetails(response))
-      .catch(console.log)
-  }, [selectedMovie])
-
   const handleSearchMovie = (e) => {
     e.preventDefault()
     setInputValue(e.target.value)
   }
 
-  const handleClickGetId = (e) => {
-    const movie = movies.filter((movie) => movie.imdbID === e)
-    setSelectedMovie(movie[0])
-    setShowDetails(true)
+  const handleClickMovie = (clickedMovie) => {
+    setClickedMovie((prev) =>
+      prev?.id === clickedMovie.id ? null : clickedMovie,
+    )
   }
-  const handleClickBack = () => setShowDetails(false)
+  const handleClickBtnBack = () => setClickedMovie(null)
+
+  const handleSubmitRating = (e) => {
+    e.preventDefault()
+    const { rating } = e.target.elements
+    setWatchedMovies((prev) => [
+      ...prev,
+      { ...clickedMovie, userRating: rating.value },
+    ])
+    setClickedMovie(null)
+  }
+
+  const handleCLickBtnDelete = (id) =>
+    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
 
   return (
     <>
@@ -94,7 +113,8 @@ const App = () => {
           <button className="btn-search">Buscar</button>
         </form>
         <p className="num-results">
-          {movies?.length} {movies?.length < 2 ? "Resultado" : "Resultados"}
+          <strong>{movies?.length}</strong>{" "}
+          {movies?.length < 2 ? "Resultado" : "Resultados"}
         </p>
       </nav>
       <main className="main">
@@ -102,65 +122,113 @@ const App = () => {
           <ul className="list">
             <button className="btn-toggle">-</button>
 
-            {movies?.map(({ Title, Poster, Year, imdbID }) => (
+            {movies?.map((movie) => (
               <li
                 className="list-movies"
-                key={imdbID}
-                onClick={() => handleClickGetId(imdbID)}
+                key={movie.imdbID}
+                onClick={() => handleClickMovie(movie)}
               >
-                <img src={Poster} alt="" />
-                <h3>{Title}</h3>
-                <p>🗓️ {Year}</p>
+                <img src={movie.Poster} alt="" />
+                <h3>{movie.Title}</h3>
+                <p>
+                  <span>🗓️</span>
+                  <span>{movie.Year}</span>{" "}
+                </p>
               </li>
             ))}
           </ul>
         </div>
         <div className="box">
-          {!showDetails && (
+          {clickedMovie ? (
+            <div className="details">
+              <header>
+                <button className="btn-back" onClick={handleClickBtnBack}>
+                  &larr;
+                </button>
+                <img src={clickedMovie.Poster} alt={`Poster de`} />
+                <div className="details-overview">
+                  <h2>{clickedMovie.Title}</h2>
+                  <p>
+                    {clickedMovie.Released} &bull; {clickedMovie.Runtime}
+                  </p>
+                  <p>{clickedMovie.Genre}</p>
+                  <p>
+                    <span>⭐️ </span>
+                    {clickedMovie.imdbRating} IMDb rating
+                  </p>
+                </div>
+              </header>
+              <section>
+                <div className="rating">
+                  <form onSubmit={handleSubmitRating} className="form-rating">
+                    <p>Qual nota você dá para este filme ?</p>
+                    <div>
+                      <select name="rating" defaultValue={1}>
+                        {Array.from({ length: 10 }, (_, index) => (
+                          <option key={index} value={index + 1}>
+                            {index + 1}
+                          </option>
+                        ))}
+                      </select>
+                      <button className="btn-add">Adicionar à lista</button>
+                    </div>
+                  </form>
+                </div>
+                <p>
+                  <em>{clickedMovie.Plot}</em>
+                </p>
+                <p>Elenco: {clickedMovie.Actors}</p>
+                <p>Direção: {clickedMovie.Director}</p>
+              </section>
+            </div>
+          ) : (
             <div className="summary">
-              <h2>Filmes Assistidos</h2>
+              <h2>Hístorico</h2>
               <div>
-                <p>🎬 0 filmes</p>
-                <p>⏳ 0 min</p>
+                <p>
+                  <span>🎬</span>
+                  <span>{watchedMovies.length} filmes</span>
+                </p>
+                <p>
+                  <span>⏳</span>
+                  <span>{getTotalMinutes(watchedMovies)} min</span>
+                </p>
               </div>
               <button className="btn-toggle">-</button>
             </div>
           )}
 
-          {showDetails && (
-            <div className="details">
-              <header>
-                <button className="btn-back" onClick={handleClickBack}>
-                  &larr;
-                </button>
-                <img src={movieDetails.Poster} alt={`Poster de`} />
-                <div className="details-overview">
-                  <h2>{movieDetails.Title}</h2>
+          <ul className="list">
+            {watchedMovies.map((movie) => (
+              <li key={movie.id}>
+                <img src={movie.poster} alt={`Poster de ${movie.title}`} />
+                <h3>{movie.title}</h3>
+                <div>
                   <p>
-                    {movieDetails.Released} &bull; {movieDetails.Runtime}
+                    <span>⭐️</span>
+                    <span>{movie.imdbRating}</span>
                   </p>
-                  <p>{movieDetails.Genre}</p>
                   <p>
-                    <span>⭐️ </span>
-                    {movieDetails.imdbRating} IMDb rating
+                    <span>⭐️</span>
+                    <span>{movie.userRating}</span>
                   </p>
+                  <p>
+                    <span>⏳</span>
+                    <span>{movie.runtime}</span>
+                  </p>
+                  <button
+                    className="btn-delete"
+                    onClick={() => handleCLickBtnDelete(movie.id)}
+                  >
+                    X
+                  </button>
                 </div>
-              </header>
-              <section>
-                <p>
-                  <em>{movieDetails.Plot}</em>
-                </p>
-                <p>Elenco: {movieDetails.Actors}</p>
-                <p>Direção: {movieDetails.Director}</p>
-              </section>
-            </div>
-          )}
-
-          <ul className="list">{/* <li className="list-watched"></li> */}</ul>
+              </li>
+            ))}
+          </ul>
         </div>
       </main>
     </>
   )
 }
-
 export { App }
