@@ -13,8 +13,6 @@ const App = () => {
 
   const [inputValue, setInputValue] = useState("")
 
-  const APIKey = "360e928c"
-
   // Request para a lista inicial
   useEffect(() => {
     fetch(
