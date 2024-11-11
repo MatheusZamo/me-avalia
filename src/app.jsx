@@ -4,7 +4,8 @@ const apiKey = import.meta.env.VITE_API_KEY
 
 const getTotalMinutes = (watchedMovies) =>
   watchedMovies.reduce(
-    (accumulator, item) => accumulator + +item.runtime.split(" ")[0],
+    (accumulator, item) =>
+      accumulator + (item.runtime === "N/A" ? 0 : +item.runtime.split(" ")[0]),
     0,
   )
 
