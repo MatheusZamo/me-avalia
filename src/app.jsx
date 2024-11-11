@@ -9,6 +9,27 @@ const getTotalMinutes = (watchedMovies) =>
     0,
   )
 
+const NavBar = ({ onSearchMovie, movies }) => (
+  <nav className="nav-bar">
+    <img className="logo" src="logo-me-avalia.png" alt="Logo" />
+    <form className="form-search" onSubmit={onSearchMovie}>
+      <input
+        name="searchMovie"
+        className="search"
+        type="text"
+        placeholder="Buscar filmes..."
+        autoFocus
+        autoComplete="off"
+      />
+      <button className="btn-search">Buscar</button>
+    </form>
+    <p className="num-results">
+      <strong>{movies?.length}</strong>{" "}
+      {movies?.length < 2 ? "Resultado" : "Resultados"}
+    </p>
+  </nav>
+)
+
 const App = () => {
   const [movies, setMovies] = useState([])
   const [clickedMovie, setClickedMovie] = useState(null)
@@ -103,24 +124,7 @@ const App = () => {
 
   return (
     <>
-      <nav className="nav-bar">
-        <img className="logo" src="logo-me-avalia.png" alt="Logo" />
-        <form className="form-search" onSubmit={handleSearchMovie}>
-          <input
-            name="searchMovie"
-            className="search"
-            type="text"
-            placeholder="Buscar filmes..."
-            autoFocus
-            autoComplete="off"
-          />
-          <button className="btn-search">Buscar</button>
-        </form>
-        <p className="num-results">
-          <strong>{movies?.length}</strong>{" "}
-          {movies?.length < 2 ? "Resultado" : "Resultados"}
-        </p>
-      </nav>
+      <NavBar onSearchMovie={handleSearchMovie} movies={movies} />
       <main className="main">
         <div className="box">
           <ul className="list list-movies">
