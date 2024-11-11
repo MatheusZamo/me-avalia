@@ -32,6 +32,23 @@ const NavBar = ({ onSearchMovie, movies }) => (
 
 const ListBox = ({ children }) => <div className="box">{children}</div>
 
+const History = ({ watchedMovies }) => (
+  <div className="summary">
+    <h2>Hístorico</h2>
+    <div>
+      <p>
+        <span>🎬</span>
+        <span>{watchedMovies.length} filmes</span>
+      </p>
+      <p>
+        <span>⏳</span>
+        <span>{getTotalMinutes(watchedMovies)} min</span>
+      </p>
+    </div>
+    <button className="btn-toggle">-</button>
+  </div>
+)
+
 const App = () => {
   const [movies, setMovies] = useState([])
   const [clickedMovie, setClickedMovie] = useState(null)
@@ -127,6 +144,7 @@ const App = () => {
   return (
     <>
       <NavBar onSearchMovie={handleSearchMovie} movies={movies} />
+
       <main className="main">
         <ListBox>
           <ul className="list list-movies">
@@ -189,20 +207,8 @@ const App = () => {
             </div>
           ) : (
             <>
-              <div className="summary">
-                <h2>Hístorico</h2>
-                <div>
-                  <p>
-                    <span>🎬</span>
-                    <span>{watchedMovies.length} filmes</span>
-                  </p>
-                  <p>
-                    <span>⏳</span>
-                    <span>{getTotalMinutes(watchedMovies)} min</span>
-                  </p>
-                </div>
-                <button className="btn-toggle">-</button>
-              </div>
+              <History watchedMovies={watchedMovies} />
+
               <ul className="list">
                 {watchedMovies.map((movie) => (
                   <li key={movie.id}>
