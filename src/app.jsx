@@ -30,6 +30,8 @@ const NavBar = ({ onSearchMovie, movies }) => (
   </nav>
 )
 
+const ListBox = ({ children }) => <div className="box">{children}</div>
+
 const App = () => {
   const [movies, setMovies] = useState([])
   const [clickedMovie, setClickedMovie] = useState(null)
@@ -126,7 +128,7 @@ const App = () => {
     <>
       <NavBar onSearchMovie={handleSearchMovie} movies={movies} />
       <main className="main">
-        <div className="box">
+        <ListBox>
           <ul className="list list-movies">
             <button className="btn-toggle">-</button>
 
@@ -141,8 +143,8 @@ const App = () => {
               </li>
             ))}
           </ul>
-        </div>
-        <div className="box">
+        </ListBox>
+        <ListBox>
           {clickedMovie ? (
             <div className="details">
               <header>
@@ -231,7 +233,7 @@ const App = () => {
               </ul>
             </>
           )}
-        </div>
+        </ListBox>
       </main>
     </>
   )
