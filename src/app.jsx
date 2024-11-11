@@ -66,6 +66,37 @@ const Movies = ({ onClickMovie, movies }) => (
   </ul>
 )
 
+const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => (
+  <ul className="list">
+    {watchedMovies.map((movie) => (
+      <li key={movie.id}>
+        <img src={movie.poster} alt={`Poster de ${movie.title}`} />
+        <h3>{movie.title}</h3>
+        <div>
+          <p>
+            <span>⭐️</span>
+            <span>{movie.imdbRating}</span>
+          </p>
+          <p>
+            <span>⭐️</span>
+            <span>{movie.userRating}</span>
+          </p>
+          <p>
+            <span>⏳</span>
+            <span>{movie.runtime}</span>
+          </p>
+          <button
+            className="btn-delete"
+            onClick={() => onClickBtnDelete(movie.id)}
+          >
+            X
+          </button>
+        </div>
+      </li>
+    ))}
+  </ul>
+)
+
 const App = () => {
   const [movies, setMovies] = useState([])
   const [clickedMovie, setClickedMovie] = useState(null)
@@ -155,7 +186,7 @@ const App = () => {
     setClickedMovie(null)
   }
 
-  const handleCLickBtnDelete = (id) =>
+  const handleClickBtnDelete = (id) =>
     setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
 
   return (
@@ -213,34 +244,12 @@ const App = () => {
             <>
               <History watchedMovies={watchedMovies} />
 
-              <ul className="list">
-                {watchedMovies.map((movie) => (
-                  <li key={movie.id}>
-                    <img src={movie.poster} alt={`Poster de ${movie.title}`} />
-                    <h3>{movie.title}</h3>
-                    <div>
-                      <p>
-                        <span>⭐️</span>
-                        <span>{movie.imdbRating}</span>
-                      </p>
-                      <p>
-                        <span>⭐️</span>
-                        <span>{movie.userRating}</span>
-                      </p>
-                      <p>
-                        <span>⏳</span>
-                        <span>{movie.runtime}</span>
-                      </p>
-                      <button
-                        className="btn-delete"
-                        onClick={() => handleCLickBtnDelete(movie.id)}
-                      >
-                        X
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {watchedMovies.length > 0 && (
+                <WatchedMovies
+                  watchedMovies={watchedMovies}
+                  onClickBtnDelete={handleClickBtnDelete}
+                />
+              )}
             </>
           )}
         </ListBox>
