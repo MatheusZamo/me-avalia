@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 
 const apiKey = import.meta.env.VITE_API_KEY
+const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
 
 const getTotalMinutes = (watchedMovies) =>
   watchedMovies.reduce(
@@ -164,9 +165,7 @@ const useClickedMovie = (setWatchedMovies) => {
       return
     }
 
-    fetch(
-      `https://www.omdbapi.com/?apikey=${apiKey}&i=${currentClickedMovie.id}`,
-    )
+    fetch(`${baseUrl}&i=${currentClickedMovie.id}`)
       .then((response) => response.json())
       .then((movie) =>
         setClickedMovie({
@@ -254,7 +253,7 @@ const App = () => {
   const [movies, setMovies] = useState([])
 
   useEffect(() => {
-    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=harry+potter`)
+    fetch(`${baseUrl}&s=harry+potter`)
       .then((response) => response.json())
       .then((data) =>
         setMovies(
@@ -280,7 +279,7 @@ const App = () => {
       return
     }
 
-    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${searchMovie.value}`)
+    fetch(`${baseUrl}&s=${searchMovie.value}`)
       .then((response) => response.json())
       .then((data) =>
         setMovies(
