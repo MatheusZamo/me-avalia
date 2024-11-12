@@ -153,9 +153,7 @@ const useWatchedMovies = () => {
   return { watchedMovies, setWatchedMovies, handleClickBtnDelete }
 }
 
-const Main = ({ movies }) => {
-  const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
-    useWatchedMovies()
+const useClickedMovie = (setWatchedMovies) => {
   const [clickedMovie, setClickedMovie] = useState(null)
 
   const handleClickMovie = (currentClickedMovie) => {
@@ -199,6 +197,25 @@ const Main = ({ movies }) => {
     ])
     setClickedMovie(null)
   }
+
+  return {
+    clickedMovie,
+    handleClickMovie,
+    handleClickBtnBack,
+    handleSubmitRating,
+  }
+}
+
+const Main = ({ movies }) => {
+  const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
+    useWatchedMovies()
+
+  const {
+    clickedMovie,
+    handleClickMovie,
+    handleClickBtnBack,
+    handleSubmitRating,
+  } = useClickedMovie(setWatchedMovies)
 
   return (
     <main className="main">
