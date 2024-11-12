@@ -182,7 +182,7 @@ const useClickedMovie = (setWatchedMovies) => {
           genre: movie.Genre,
         }),
       )
-      .catch(console.log)
+      .catch((error) => alert(error.message))
   }
 
   const handleClickBtnBack = () => setClickedMovie(null)
@@ -265,7 +265,7 @@ const App = () => {
           })),
         ),
       )
-      .catch(console.log)
+      .catch((error) => alert(error.message))
 
     return () => setMovies()
   }, [])
@@ -291,7 +291,7 @@ const App = () => {
           })),
         ),
       )
-      .catch(console.log)
+      .catch((error) => alert(error.message))
   }
 
   return (
