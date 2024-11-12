@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 
 const apiKey = import.meta.env.VITE_API_KEY
+const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
 
 const getTotalMinutes = (watchedMovies) =>
   watchedMovies.reduce(
@@ -8,6 +9,8 @@ const getTotalMinutes = (watchedMovies) =>
       accumulator + (item.runtime === "N/A" ? 0 : +item.runtime.split(" ")[0]),
     0,
   )
+
+const getMoviePoster = (src) => (src === "N/A" ? "404-img.jpg" : src)
 
 const NavBar = ({ onSearchMovie, movies }) => (
   <nav className="nav-bar">
@@ -55,7 +58,7 @@ const Movies = ({ onClickMovie, movies }) => (
 
     {movies?.map((movie) => (
       <li key={movie.id} onClick={() => onClickMovie(movie)}>
-        <img src={movie.poster} alt="" />
+        <img src={getMoviePoster(movie.poster)} alt="" />
         <h3>{movie.title}</h3>
         <p>
           <span>🗓️</span>
@@ -70,7 +73,10 @@ const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => (
   <ul className="list">
     {watchedMovies.map((movie) => (
       <li key={movie.id}>
-        <img src={movie.poster} alt={`Poster de ${movie.title}`} />
+        <img
+          src={getMoviePoster(movie.poster)}
+          alt={`Poster de ${movie.title}`}
+        />
         <h3>{movie.title}</h3>
         <div>
           <p>
@@ -103,7 +109,7 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
       <button className="btn-back" onClick={onClickBtnBack}>
         &larr;
       </button>
-      <img src={clickedMovie.poster} alt={`Poster de`} />
+      <img src={getMoviePoster(clickedMovie.poster)} alt={`Poster de`} />
       <div className="details-overview">
         <h2>{clickedMovie.title}</h2>
         <p>
@@ -141,52 +147,15 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
   </div>
 )
 
-const App = () => {
-  const [movies, setMovies] = useState([])
-  const [clickedMovie, setClickedMovie] = useState(null)
+const useWatchedMovies = () => {
   const [watchedMovies, setWatchedMovies] = useState([])
+  const handleClickBtnDelete = (id) =>
+    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
+  return { watchedMovies, setWatchedMovies, handleClickBtnDelete }
+}
 
-  useEffect(() => {
-    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=harry+potter`)
-      .then((response) => response.json())
-      .then((data) =>
-        setMovies(
-          data.Search.map((movie) => ({
-            id: movie.imdbID,
-            title: movie.Title,
-            year: movie.Year,
-            poster: movie.Poster,
-          })),
-        ),
-      )
-      .catch(console.log)
-
-    return () => setMovies()
-  }, [])
-
-  const handleSearchMovie = (e) => {
-    e.preventDefault()
-
-    const { searchMovie } = e.target.elements
-
-    if (searchMovie < 2) {
-      return
-    }
-
-    fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${searchMovie.value}`)
-      .then((response) => response.json())
-      .then((data) =>
-        setMovies(
-          data.Search.map((movie) => ({
-            id: movie.imdbID,
-            title: movie.Title,
-            year: movie.Year,
-            poster: movie.Poster,
-          })),
-        ),
-      )
-      .catch(console.log)
-  }
+const useClickedMovie = (setWatchedMovies) => {
+  const [clickedMovie, setClickedMovie] = useState(null)
 
   const handleClickMovie = (currentClickedMovie) => {
     const prevClickedMovie = clickedMovie
@@ -196,9 +165,7 @@ const App = () => {
       return
     }
 
-    fetch(
-      `https://www.omdbapi.com/?apikey=${apiKey}&i=${currentClickedMovie.id}`,
-    )
+    fetch(`${baseUrl}&i=${currentClickedMovie.id}`)
       .then((response) => response.json())
       .then((movie) =>
         setClickedMovie({
@@ -215,7 +182,7 @@ const App = () => {
           genre: movie.Genre,
         }),
       )
-      .catch(console.log)
+      .catch((error) => alert(error.message))
   }
 
   const handleClickBtnBack = () => setClickedMovie(null)
@@ -230,42 +197,107 @@ const App = () => {
     setClickedMovie(null)
   }
 
-  const handleClickBtnDelete = (id) =>
-    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
+  return {
+    clickedMovie,
+    handleClickMovie,
+    handleClickBtnBack,
+    handleSubmitRating,
+  }
+}
+
+const Main = ({ movies }) => {
+  const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
+    useWatchedMovies()
+
+  const {
+    clickedMovie,
+    handleClickMovie,
+    handleClickBtnBack,
+    handleSubmitRating,
+  } = useClickedMovie(setWatchedMovies)
+
+  return (
+    <main className="main">
+      <ListBox>
+        <Movies movies={movies} onClickMovie={handleClickMovie} />
+      </ListBox>
+      <ListBox>
+        {clickedMovie ? (
+          <MovieDetails
+            clickedMovie={clickedMovie}
+            onSubmitRating={handleSubmitRating}
+            onClickBtnBack={handleClickBtnBack}
+          />
+        ) : (
+          <>
+            <History
+              watchedMovies={watchedMovies}
+              onClickBtnBack={handleClickBtnBack}
+              onSubmitRating={handleSubmitRating}
+            />
+
+            {watchedMovies.length > 0 && (
+              <WatchedMovies
+                watchedMovies={watchedMovies}
+                onClickBtnDelete={handleClickBtnDelete}
+              />
+            )}
+          </>
+        )}
+      </ListBox>
+    </main>
+  )
+}
+
+const App = () => {
+  const [movies, setMovies] = useState([])
+
+  useEffect(() => {
+    fetch(`${baseUrl}&s=harry+potter`)
+      .then((response) => response.json())
+      .then((data) =>
+        setMovies(
+          data.Search.map((movie) => ({
+            id: movie.imdbID,
+            title: movie.Title,
+            year: movie.Year,
+            poster: movie.Poster,
+          })),
+        ),
+      )
+      .catch((error) => alert(error.message))
+
+    return () => setMovies()
+  }, [])
+
+  const handleSearchMovie = (e) => {
+    e.preventDefault()
+
+    const { searchMovie } = e.target.elements
+
+    if (searchMovie < 2) {
+      return
+    }
+
+    fetch(`${baseUrl}&s=${searchMovie.value}`)
+      .then((response) => response.json())
+      .then((data) =>
+        setMovies(
+          data.Search.map((movie) => ({
+            id: movie.imdbID,
+            title: movie.Title,
+            year: movie.Year,
+            poster: movie.Poster,
+          })),
+        ),
+      )
+      .catch((error) => alert(error.message))
+  }
 
   return (
     <>
       <NavBar onSearchMovie={handleSearchMovie} movies={movies} />
-
-      <main className="main">
-        <ListBox>
-          <Movies movies={movies} onClickMovie={handleClickMovie} />
-        </ListBox>
-        <ListBox>
-          {clickedMovie ? (
-            <MovieDetails
-              clickedMovie={clickedMovie}
-              onSubmitRating={handleSubmitRating}
-              onClickBtnBack={handleClickBtnBack}
-            />
-          ) : (
-            <>
-              <History
-                watchedMovies={watchedMovies}
-                onClickBtnBack={handleClickBtnBack}
-                onSubmitRating={handleSubmitRating}
-              />
-
-              {watchedMovies.length > 0 && (
-                <WatchedMovies
-                  watchedMovies={watchedMovies}
-                  onClickBtnDelete={handleClickBtnDelete}
-                />
-              )}
-            </>
-          )}
-        </ListBox>
-      </main>
+      <Main movies={movies} />
     </>
   )
 }
