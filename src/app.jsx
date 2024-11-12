@@ -146,9 +146,17 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
   </div>
 )
 
-const Main = ({ movies }) => {
-  const [clickedMovie, setClickedMovie] = useState(null)
+const useWatchedMovies = () => {
   const [watchedMovies, setWatchedMovies] = useState([])
+  const handleClickBtnDelete = (id) =>
+    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
+  return { watchedMovies, setWatchedMovies, handleClickBtnDelete }
+}
+
+const Main = ({ movies }) => {
+  const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
+    useWatchedMovies()
+  const [clickedMovie, setClickedMovie] = useState(null)
 
   const handleClickMovie = (currentClickedMovie) => {
     const prevClickedMovie = clickedMovie
@@ -192,8 +200,6 @@ const Main = ({ movies }) => {
     setClickedMovie(null)
   }
 
-  const handleClickBtnDelete = (id) =>
-    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
   return (
     <main className="main">
       <ListBox>
