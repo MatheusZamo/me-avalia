@@ -9,6 +9,8 @@ const getTotalMinutes = (watchedMovies) =>
     0,
   )
 
+const getMoviePoster = (src) => (src === "N/A" ? "404-img.jpg" : src)
+
 const NavBar = ({ onSearchMovie, movies }) => (
   <nav className="nav-bar">
     <img className="logo" src="logo-me-avalia.png" alt="Logo" />
@@ -55,7 +57,7 @@ const Movies = ({ onClickMovie, movies }) => (
 
     {movies?.map((movie) => (
       <li key={movie.id} onClick={() => onClickMovie(movie)}>
-        <img src={movie.poster} alt="" />
+        <img src={getMoviePoster(movie.poster)} alt="" />
         <h3>{movie.title}</h3>
         <p>
           <span>🗓️</span>
@@ -70,7 +72,10 @@ const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => (
   <ul className="list">
     {watchedMovies.map((movie) => (
       <li key={movie.id}>
-        <img src={movie.poster} alt={`Poster de ${movie.title}`} />
+        <img
+          src={getMoviePoster(movie.poster)}
+          alt={`Poster de ${movie.title}`}
+        />
         <h3>{movie.title}</h3>
         <div>
           <p>
@@ -103,7 +108,7 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
       <button className="btn-back" onClick={onClickBtnBack}>
         &larr;
       </button>
-      <img src={clickedMovie.poster} alt={`Poster de`} />
+      <img src={getMoviePoster(clickedMovie.poster)} alt={`Poster de`} />
       <div className="details-overview">
         <h2>{clickedMovie.title}</h2>
         <p>
