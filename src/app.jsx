@@ -199,6 +199,7 @@ const useClickedMovie = (setWatchedMovies) => {
 
   return {
     clickedMovie,
+    setClickedMovie,
     handleClickMovie,
     handleClickBtnBack,
     handleSubmitRating,
@@ -206,11 +207,16 @@ const useClickedMovie = (setWatchedMovies) => {
 }
 
 const Main = ({ movies }) => {
+  useEffect(() => {
+    setClickedMovie(null)
+  }, [movies])
+
   const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
     useWatchedMovies()
 
   const {
     clickedMovie,
+    setClickedMovie,
     handleClickMovie,
     handleClickBtnBack,
     handleSubmitRating,
@@ -281,7 +287,7 @@ const App = () => {
 
     fetch(`${baseUrl}&s=${searchMovie.value}`)
       .then((response) => response.json())
-      .then((data) =>
+      .then((data) => {
         setMovies(
           data.Search.map((movie) => ({
             id: movie.imdbID,
@@ -289,8 +295,8 @@ const App = () => {
             year: movie.Year,
             poster: movie.Poster,
           })),
-        ),
-      )
+        )
+      })
       .catch((error) => alert(error.message))
   }
 
