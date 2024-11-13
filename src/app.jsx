@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 
 const apiKey = import.meta.env.VITE_API_KEY
 const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
@@ -12,26 +12,34 @@ const getTotalMinutes = (watchedMovies) =>
 
 const getMoviePoster = (src) => (src === "N/A" ? "404-img.jpg" : src)
 
-const NavBar = ({ onSearchMovie, movies }) => (
-  <nav className="nav-bar">
-    <img className="logo" src="logo-me-avalia.png" alt="Logo" />
-    <form className="form-search" onSubmit={onSearchMovie}>
-      <input
-        name="searchMovie"
-        className="search"
-        type="text"
-        placeholder="Buscar filmes..."
-        autoFocus
-        autoComplete="off"
-      />
-      <button className="btn-search">Buscar</button>
-    </form>
-    <p className="num-results">
-      <strong>{movies?.length}</strong>{" "}
-      {movies?.length < 2 ? "Resultado" : "Resultados"}
-    </p>
-  </nav>
-)
+const NavBar = ({ onSearchMovie, movies }) => {
+  const formRef = useRef(null)
+
+  useEffect(() => {
+    formRef.current.reset()
+  }, [movies])
+
+  return (
+    <nav className="nav-bar">
+      <img className="logo" src="logo-me-avalia.png" alt="Logo" />
+      <form className="form-search" onSubmit={onSearchMovie} ref={formRef}>
+        <input
+          name="searchMovie"
+          className="search"
+          type="text"
+          placeholder="Buscar filmes..."
+          autoFocus
+          autoComplete="off"
+        />
+        <button className="btn-search">Buscar</button>
+      </form>
+      <p className="num-results">
+        <strong>{movies?.length}</strong>{" "}
+        {movies?.length < 2 ? "Resultado" : "Resultados"}
+      </p>
+    </nav>
+  )
+}
 
 const ListBox = ({ children }) => <div className="box">{children}</div>
 
