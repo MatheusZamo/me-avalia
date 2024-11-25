@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import localforage from "localforage"
 
 const apiKey = import.meta.env.VITE_API_KEY
 const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
@@ -77,39 +78,47 @@ const Movies = ({ onClickMovie, movies }) => (
   </ul>
 )
 
-const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => (
-  <ul className="list">
-    {watchedMovies.map((movie) => (
-      <li key={movie.id}>
-        <img
-          src={getMoviePoster(movie.poster)}
-          alt={`Poster de ${movie.title}`}
-        />
-        <h3>{movie.title}</h3>
-        <div>
-          <p>
-            <span>⭐️</span>
-            <span>{movie.imdbRating}</span>
-          </p>
-          <p>
-            <span>⭐️</span>
-            <span>{movie.userRating}</span>
-          </p>
-          <p>
-            <span>⏳</span>
-            <span>{movie.runtime}</span>
-          </p>
-          <button
-            className="btn-delete"
-            onClick={() => onClickBtnDelete(movie.id)}
-          >
-            X
-          </button>
-        </div>
-      </li>
-    ))}
-  </ul>
-)
+const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => {
+  useEffect(() => {
+    localforage
+      .setItem("movies", watchedMovies)
+      .catch((error) => alert(error.message))
+  }, [watchedMovies])
+
+  return (
+    <ul className="list">
+      {watchedMovies.map((movie) => (
+        <li key={movie.id}>
+          <img
+            src={getMoviePoster(movie.poster)}
+            alt={`Poster de ${movie.title}`}
+          />
+          <h3>{movie.title}</h3>
+          <div>
+            <p>
+              <span>⭐️</span>
+              <span>{movie.imdbRating}</span>
+            </p>
+            <p>
+              <span>⭐️</span>
+              <span>{movie.userRating}</span>
+            </p>
+            <p>
+              <span>⏳</span>
+              <span>{movie.runtime}</span>
+            </p>
+            <button
+              className="btn-delete"
+              onClick={() => onClickBtnDelete(movie.id)}
+            >
+              X
+            </button>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}
 
 const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
   <div className="details">
@@ -197,7 +206,9 @@ const useClickedMovie = (setWatchedMovies) => {
 
   const handleSubmitRating = (e) => {
     e.preventDefault()
+
     const { rating } = e.target.elements
+
     setWatchedMovies((prev) => [
       ...prev,
       { ...clickedMovie, userRating: rating.value },
@@ -218,6 +229,17 @@ const Main = ({ movies }) => {
   useEffect(() => {
     setClickedMovie(null)
   }, [movies])
+
+  useEffect(() => {
+    localforage
+      .getItem("movies")
+      .then((value) => {
+        if (value) {
+          setWatchedMovies(value)
+        }
+      })
+      .catch((error) => alert(error.message))
+  }, [])
 
   const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
     useWatchedMovies()
