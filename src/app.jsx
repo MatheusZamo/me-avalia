@@ -81,12 +81,6 @@ const Movies = ({ onClickMovie, movies }) => (
 )
 
 const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => {
-  useEffect(() => {
-    localforage
-      .setItem("movies", watchedMovies)
-      .catch((error) => alert(error.message))
-  }, [watchedMovies])
-
   return (
     <ul className="list">
       {watchedMovies.map((movie) => (
@@ -168,6 +162,24 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
 
 const useWatchedMovies = () => {
   const [watchedMovies, setWatchedMovies] = useState([])
+
+  useEffect(() => {
+    localforage
+      .setItem("movies", watchedMovies)
+      .catch((error) => alert(error.message))
+  }, [watchedMovies])
+
+  useEffect(() => {
+    localforage
+      .getItem("movies")
+      .then((value) => {
+        if (value) {
+          setWatchedMovies(value)
+        }
+      })
+      .catch((error) => alert(error.message))
+  }, [])
+
   const handleClickBtnDelete = (id) =>
     setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
   return { watchedMovies, setWatchedMovies, handleClickBtnDelete }
@@ -237,17 +249,6 @@ const Main = ({ movies }) => {
   useEffect(() => {
     setClickedMovie(null)
   }, [movies])
-
-  useEffect(() => {
-    localforage
-      .getItem("movies")
-      .then((value) => {
-        if (value) {
-          setWatchedMovies(value)
-        }
-      })
-      .catch((error) => alert(error.message))
-  }, [])
 
   const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
     useWatchedMovies()
