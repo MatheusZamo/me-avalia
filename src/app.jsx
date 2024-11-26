@@ -17,7 +17,9 @@ const NavBar = ({ onSearchMovie, movies }) => {
   const formRef = useRef(null)
 
   useEffect(() => {
-    formRef.current.reset()
+    if (formRef.current.elements.searchMovie.value.length > 0) {
+      formRef.current.reset()
+    }
   }, [movies])
 
   return (
@@ -79,12 +81,6 @@ const Movies = ({ onClickMovie, movies }) => (
 )
 
 const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => {
-  useEffect(() => {
-    localforage
-      .setItem("movies", watchedMovies)
-      .catch((error) => alert(error.message))
-  }, [watchedMovies])
-
   return (
     <ul className="list">
       {watchedMovies.map((movie) => (
@@ -166,6 +162,24 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => (
 
 const useWatchedMovies = () => {
   const [watchedMovies, setWatchedMovies] = useState([])
+
+  useEffect(() => {
+    localforage
+      .setItem("movies", watchedMovies)
+      .catch((error) => alert(error.message))
+  }, [watchedMovies])
+
+  useEffect(() => {
+    localforage
+      .getItem("movies")
+      .then((value) => {
+        if (value) {
+          setWatchedMovies(value)
+        }
+      })
+      .catch((error) => alert(error.message))
+  }, [])
+
   const handleClickBtnDelete = (id) =>
     setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
   return { watchedMovies, setWatchedMovies, handleClickBtnDelete }
@@ -206,13 +220,19 @@ const useClickedMovie = (setWatchedMovies) => {
 
   const handleSubmitRating = (e) => {
     e.preventDefault()
-
     const { rating } = e.target.elements
 
-    setWatchedMovies((prev) => [
-      ...prev,
-      { ...clickedMovie, userRating: rating.value },
-    ])
+    setWatchedMovies((prev) => {
+      const duplicatedMovie = prev.some((movie) => movie.id === clickedMovie.id)
+
+      return duplicatedMovie
+        ? prev.map((movie) =>
+            movie.id === clickedMovie.id
+              ? { ...clickedMovie, userRating: rating.value }
+              : movie,
+          )
+        : [...prev, { ...clickedMovie, userRating: rating.value }]
+    })
     setClickedMovie(null)
   }
 
@@ -229,17 +249,6 @@ const Main = ({ movies }) => {
   useEffect(() => {
     setClickedMovie(null)
   }, [movies])
-
-  useEffect(() => {
-    localforage
-      .getItem("movies")
-      .then((value) => {
-        if (value) {
-          setWatchedMovies(value)
-        }
-      })
-      .catch((error) => alert(error.message))
-  }, [])
 
   const { watchedMovies, setWatchedMovies, handleClickBtnDelete } =
     useWatchedMovies()
