@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react"
-import localforage from "localforage"
 import { StarRating } from "./components/star-rating"
 import { History } from "./components/history"
 import { NavBar } from "./components/nav-bar"
+import { useWatchedMovies } from "./hooks/use-watched-movies"
 
 const apiKey = import.meta.env.VITE_API_KEY
 const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
@@ -107,30 +107,6 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => {
       </section>
     </div>
   )
-}
-const useWatchedMovies = () => {
-  const [watchedMovies, setWatchedMovies] = useState([])
-
-  useEffect(() => {
-    localforage
-      .setItem("movies", watchedMovies)
-      .catch((error) => alert(error.message))
-  }, [watchedMovies])
-
-  useEffect(() => {
-    localforage
-      .getItem("movies")
-      .then((value) => {
-        if (value) {
-          setWatchedMovies(value)
-        }
-      })
-      .catch((error) => alert(error.message))
-  }, [])
-
-  const handleClickBtnDelete = (id) =>
-    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
-  return { watchedMovies, setWatchedMovies, handleClickBtnDelete }
 }
 
 const useClickedMovie = (setWatchedMovies) => {
