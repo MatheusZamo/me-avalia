@@ -1,16 +1,10 @@
 import { useState, useEffect, useRef } from "react"
 import localforage from "localforage"
 import { StarRating } from "./components/star-rating"
+import { History } from "./components/history"
 
 const apiKey = import.meta.env.VITE_API_KEY
 const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
-
-const getTotalMinutes = (watchedMovies) =>
-  watchedMovies.reduce(
-    (accumulator, item) =>
-      accumulator + (item.runtime === "N/A" ? 0 : +item.runtime.split(" ")[0]),
-    0,
-  )
 
 const getMoviePoster = (src) => (src === "N/A" ? "404-img.jpg" : src)
 
@@ -46,23 +40,6 @@ const NavBar = ({ onSearchMovie, movies }) => {
 }
 
 const ListBox = ({ children }) => <div className="box">{children}</div>
-
-const History = ({ watchedMovies }) => (
-  <div className="summary">
-    <h2>Hístorico</h2>
-    <div>
-      <p>
-        <span>🎬</span>
-        <span>{watchedMovies.length} filmes</span>
-      </p>
-      <p>
-        <span>⏳</span>
-        <span>{getTotalMinutes(watchedMovies)} min</span>
-      </p>
-    </div>
-    <button className="btn-toggle">-</button>
-  </div>
-)
 
 const Movies = ({ onClickMovie, movies }) => (
   <ul className="list list-movies">
