@@ -53,20 +53,6 @@ body {
   position: relative;
 }
 
-.loader {
-  text-align: center;
-  text-transform: uppercase;
-  font-size: 2rem;
-  font-weight: 600;
-  margin: 4.8rem;
-}
-
-.error {
-  text-align: center;
-  font-size: 2rem;
-  padding: 4.8rem;
-}
-
 .logo {
   width: 214px;
 }
@@ -135,10 +121,6 @@ body {
   list-style: none;
   padding: 0.8rem 0;
   overflow: scroll;
-}
-
-.list-watched {
-  height: calc(100% - 9rem);
 }
 
 .list li {
@@ -294,16 +276,6 @@ body {
 
 .btn-add:hover {
   background-color: var(--color-primary-light);
-}
-
-.seconds {
-  background-color: var(--color-background-100);
-  width: 8rem;
-  border-radius: 10rem;
-  font-weight: 600;
-  text-align: center;
-  padding: 0.4rem;
-  margin-top: 2.4rem;
 }
 
 .btn-back {
