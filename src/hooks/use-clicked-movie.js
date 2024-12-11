@@ -3,6 +3,7 @@ import { baseUrl } from "@/utils/base-url"
 
 const useClickedMovie = (setWatchedMovies) => {
   const [clickedMovie, setClickedMovie] = useState(null)
+  const [isFetchingMoviesDetails, setIsFetchingMoviesDetails] = useState(false)
 
   const handleClickMovie = (currentClickedMovie) => {
     const prevClickedMovie = clickedMovie
@@ -12,6 +13,7 @@ const useClickedMovie = (setWatchedMovies) => {
       return
     }
 
+    setIsFetchingMoviesDetails(true)
     fetch(`${baseUrl}&i=${currentClickedMovie.id}`)
       .then((response) => response.json())
       .then((movie) =>
@@ -30,6 +32,7 @@ const useClickedMovie = (setWatchedMovies) => {
         }),
       )
       .catch((error) => alert(error.message))
+      .finally(() => setIsFetchingMoviesDetails(false))
   }
 
   const handleClickBtnBack = () => setClickedMovie(null)
@@ -55,6 +58,7 @@ const useClickedMovie = (setWatchedMovies) => {
     handleClickMovie,
     handleClickBtnBack,
     handleSubmitRating,
+    isFetchingMoviesDetails,
   }
 }
 

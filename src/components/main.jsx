@@ -3,12 +3,13 @@ import { History } from "@/components/history"
 import { Movies } from "@/components/movies"
 import { WatchedMovies } from "@/components/watched-movies"
 import { MovieDetails } from "@/components/movie-details"
+import { Loader } from "@/components/Loader"
 import { useWatchedMovies } from "@/hooks/use-watched-movies"
 import { useClickedMovie } from "@/hooks/use-clicked-movie"
 
 const ListBox = ({ children }) => <div className="box">{children}</div>
 
-const Main = ({ movies }) => {
+const Main = ({ movies, isFetchingMovies }) => {
   useEffect(() => {
     setClickedMovie(null)
   }, [movies])
@@ -22,15 +23,22 @@ const Main = ({ movies }) => {
     handleClickMovie,
     handleClickBtnBack,
     handleSubmitRating,
+    isFetchingMoviesDetails,
   } = useClickedMovie(setWatchedMovies)
 
   return (
     <main className="main">
       <ListBox>
-        <Movies movies={movies} onClickMovie={handleClickMovie} />
+        {isFetchingMovies ? (
+          <Loader />
+        ) : (
+          <Movies movies={movies} onClickMovie={handleClickMovie} />
+        )}
       </ListBox>
       <ListBox>
-        {clickedMovie ? (
+        {isFetchingMoviesDetails ? (
+          <Loader />
+        ) : clickedMovie ? (
           <MovieDetails
             clickedMovie={clickedMovie}
             onSubmitRating={handleSubmitRating}

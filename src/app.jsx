@@ -5,8 +5,10 @@ import { baseUrl } from "@/utils/base-url"
 
 const App = () => {
   const [movies, setMovies] = useState([])
+  const [isFetchingMovies, setIsFetchingMovies] = useState(false)
 
   useEffect(() => {
+    setIsFetchingMovies(true)
     fetch(`${baseUrl}&s=harry+potter`)
       .then((response) => response.json())
       .then((data) =>
@@ -20,6 +22,7 @@ const App = () => {
         ),
       )
       .catch((error) => alert(error.message))
+      .finally(() => setIsFetchingMovies(false))
 
     return () => setMovies()
   }, [])
@@ -33,6 +36,7 @@ const App = () => {
       return
     }
 
+    setIsFetchingMovies(true)
     fetch(`${baseUrl}&s=${searchMovie.value}`)
       .then((response) => response.json())
       .then((data) => {
@@ -46,12 +50,13 @@ const App = () => {
         )
       })
       .catch((error) => alert(error.message))
+      .finally(() => setIsFetchingMovies(false))
   }
 
   return (
     <>
       <NavBar onSearchMovie={handleSearchMovie} movies={movies} />
-      <Main movies={movies} />
+      <Main movies={movies} isFetchingMovies={isFetchingMovies} />
     </>
   )
 }
