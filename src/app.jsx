@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Main } from "@/components/main"
 import { baseUrl } from "@/utils/base-url"
+import { request } from "@/utils/request"
 
 const App = () => {
   const [movies, setMovies] = useState([])
@@ -9,9 +10,10 @@ const App = () => {
 
   useEffect(() => {
     setIsFetchingMovies(true)
-    fetch(`${baseUrl}&s=harry+potter`)
-      .then((response) => response.json())
-      .then((data) =>
+
+    request({
+      url: `${baseUrl}&s=harry+potter`,
+      onSuccess: (data) =>
         setMovies(
           data.Search.map((movie) => ({
             id: movie.imdbID,
@@ -20,11 +22,8 @@ const App = () => {
             poster: movie.Poster,
           })),
         ),
-      )
-      .catch((error) => alert(error.message))
-      .finally(() => setIsFetchingMovies(false))
-
-    return () => setMovies()
+      onFinally: () => setIsFetchingMovies(false),
+    })
   }, [])
 
   const handleSearchMovie = (e) => {
@@ -37,9 +36,10 @@ const App = () => {
     }
 
     setIsFetchingMovies(true)
-    fetch(`${baseUrl}&s=${searchMovie.value}`)
-      .then((response) => response.json())
-      .then((data) => {
+
+    request({
+      url: `${baseUrl}&s=${searchMovie.value}`,
+      onSuccess: (data) => {
         setMovies(
           data.Search.map((movie) => ({
             id: movie.imdbID,
@@ -48,9 +48,9 @@ const App = () => {
             poster: movie.Poster,
           })),
         )
-      })
-      .catch((error) => alert(error.message))
-      .finally(() => setIsFetchingMovies(false))
+      },
+      onFinally: () => setIsFetchingMovies(false),
+    })
   }
 
   return (
