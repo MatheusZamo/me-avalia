@@ -1,28 +1,38 @@
-import { useState, useEffect } from "react"
+import { useReducer, useEffect } from "react"
 import { NavBar } from "@/components/nav-bar"
 import { Main } from "@/components/main"
 import { baseUrl } from "@/utils/base-url"
 import { request } from "@/utils/request"
 
+const reducer = (state, action) =>
+  ({
+    set_movies: {
+      ...state,
+      movies: action.movies?.map((movie) => ({
+        id: movie.imdbID,
+        title: movie.Title,
+        year: movie.Year,
+        poster: movie.Poster,
+      })),
+    },
+    init_fetch: { ...state, isFetchingMovies: true },
+    ended_fetch: { ...state, isFetchingMovies: false },
+  })[action.type] || state
+
 const App = () => {
-  const [movies, setMovies] = useState([])
-  const [isFetchingMovies, setIsFetchingMovies] = useState(false)
+  const [state, dispatch] = useReducer(reducer, {
+    movies: [],
+    isFetchingMovies: false,
+  })
 
   useEffect(() => {
-    setIsFetchingMovies(true)
+    dispatch({ type: "init_fetch" })
 
     request({
       url: `${baseUrl}&s=harry+potter`,
       onSuccess: (data) =>
-        setMovies(
-          data.Search.map((movie) => ({
-            id: movie.imdbID,
-            title: movie.Title,
-            year: movie.Year,
-            poster: movie.Poster,
-          })),
-        ),
-      onFinally: () => setIsFetchingMovies(false),
+        dispatch({ type: "set_movies", movies: data.Search }),
+      onFinally: () => dispatch({ type: "ended_fetch" }),
     })
   }, [])
 
@@ -35,28 +45,20 @@ const App = () => {
       return
     }
 
-    setIsFetchingMovies(true)
+    dispatch({ type: "init_fetch" })
 
     request({
       url: `${baseUrl}&s=${searchMovie.value}`,
-      onSuccess: (data) => {
-        setMovies(
-          data.Search.map((movie) => ({
-            id: movie.imdbID,
-            title: movie.Title,
-            year: movie.Year,
-            poster: movie.Poster,
-          })),
-        )
-      },
-      onFinally: () => setIsFetchingMovies(false),
+      onSuccess: (data) =>
+        dispatch({ type: "set_movies", movies: data.Search }),
+      onFinally: () => dispatch({ type: "ended_fetch" }),
     })
   }
 
   return (
     <>
-      <NavBar onSearchMovie={handleSearchMovie} movies={movies} />
-      <Main movies={movies} isFetchingMovies={isFetchingMovies} />
+      <NavBar onSearchMovie={handleSearchMovie} movies={state.movies} />
+      <Main movies={state.movies} isFetchingMovies={state.isFetchingMovies} />
     </>
   )
 }
