@@ -1,3 +1,4 @@
-const baseUrl = `https://www.omdbapi.com/?apikey=3${360e928c}`
+const apiKey = import.meta.env.VITE_API_KEY
+const baseUrl = `https://www.omdbapi.com/?apikey=${apiKey}`
 
 export { baseUrl }
