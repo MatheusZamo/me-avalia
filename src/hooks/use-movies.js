@@ -1,10 +1,32 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import localforage from "localforage"
 import { baseUrl } from "@/utils/base-url"
 import { request } from "@/utils/request"
 
-const useClickedMovie = (setWatchedMovies) => {
+const useMovies = () => {
   const [clickedMovie, setClickedMovie] = useState(null)
+  const [watchedMovies, setWatchedMovies] = useState([])
   const [isFetchingMoviesDetails, setIsFetchingMoviesDetails] = useState(false)
+
+  useEffect(() => {
+    localforage
+      .setItem("movies", watchedMovies)
+      .catch((error) => alert(error.message))
+  }, [watchedMovies])
+
+  useEffect(() => {
+    localforage
+      .getItem("movies")
+      .then((value) => {
+        if (value) {
+          setWatchedMovies(value)
+        }
+      })
+      .catch((error) => alert(error.message))
+  }, [])
+
+  const handleClickBtnDelete = (id) =>
+    setWatchedMovies((prev) => prev.filter((p) => p.id !== id))
 
   const handleClickMovie = (currentClickedMovie) => {
     const prevClickedMovie = clickedMovie
@@ -55,11 +77,13 @@ const useClickedMovie = (setWatchedMovies) => {
   return {
     clickedMovie,
     setClickedMovie,
+    isFetchingMoviesDetails,
+    watchedMovies,
+    handleClickBtnDelete,
     handleClickMovie,
     handleClickBtnBack,
     handleSubmitRating,
-    isFetchingMoviesDetails,
   }
 }
 
-export { useClickedMovie }
+export { useMovies }
