@@ -8,7 +8,6 @@ const useClickedMovie = (setWatchedMovies) => {
 
   const handleClickMovie = (currentClickedMovie) => {
     const prevClickedMovie = clickedMovie
-
     if (prevClickedMovie?.id === currentClickedMovie.id) {
       setClickedMovie(null)
       return

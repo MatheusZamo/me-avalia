@@ -1,15 +1,16 @@
 import { getMoviePoster } from "@/utils/get-movie-poster"
 
-const WatchedMovies = ({ watchedMovies, onClickBtnDelete }) => {
+const WatchedMovies = ({ watchedMovies, onClickBtnDelete, onClickMovie }) => {
   return (
-    <ul className="list">
+    <ul className="list list-movies">
       {watchedMovies.map((movie) => (
         <li key={movie.id}>
           <img
             src={getMoviePoster(movie.poster)}
             alt={`Poster de ${movie.title}`}
+            onClick={() => onClickMovie(movie)}
           />
-          <h3>{movie.title}</h3>
+          <h3 onClick={() => onClickMovie(movie)}>{movie.title}</h3>
           <div>
             <p>
               <span>⭐️</span>

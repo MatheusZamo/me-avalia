@@ -54,6 +54,7 @@ const Main = ({ movies, isFetchingMovies }) => {
 
             {watchedMovies.length > 0 && (
               <WatchedMovies
+                onClickMovie={handleClickMovie}
                 watchedMovies={watchedMovies}
                 onClickBtnDelete={handleClickBtnDelete}
               />
