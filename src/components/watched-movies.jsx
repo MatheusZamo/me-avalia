@@ -1,16 +1,19 @@
 import { getMoviePoster } from "@/utils/get-movie-poster"
 
 const WatchedMovies = ({ watchedMovies, onClickBtnDelete, onClickMovie }) => {
+  const handleClickDelete = ({ e, id }) => {
+    e.stopPropagation()
+    onClickBtnDelete(id)
+  }
   return (
     <ul className="list list-movies">
       {watchedMovies.map((movie) => (
-        <li key={movie.id}>
+        <li key={movie.id} onClick={() => onClickMovie(movie)}>
           <img
             src={getMoviePoster(movie.poster)}
             alt={`Poster de ${movie.title}`}
-            onClick={() => onClickMovie(movie)}
           />
-          <h3 onClick={() => onClickMovie(movie)}>{movie.title}</h3>
+          <h3>{movie.title}</h3>
           <div>
             <p>
               <span>⭐️</span>
@@ -26,7 +29,7 @@ const WatchedMovies = ({ watchedMovies, onClickBtnDelete, onClickMovie }) => {
             </p>
             <button
               className="btn-delete"
-              onClick={() => onClickBtnDelete(movie.id)}
+              onClick={(e) => handleClickDelete({ e, id: movie.id })}
             >
               X
             </button>
