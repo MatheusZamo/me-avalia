@@ -57,8 +57,9 @@ const StarRating = ({
   size = 48,
   className = "",
   onRating,
+  initialRating = 0,
 }) => {
-  const [rating, setRating] = useState(0)
+  const [rating, setRating] = useState(initialRating)
   const [tempRating, setTempRating] = useState(0)
 
   const handleMouseOut = () => setTempRating(0)

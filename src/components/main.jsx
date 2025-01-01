@@ -41,6 +41,7 @@ const Main = ({ movies, isFetchingMovies }) => {
             clickedMovie={clickedMovie}
             onSubmitRating={handleSubmitRating}
             onClickBtnBack={handleClickBtnBack}
+            watchedMovies={watchedMovies}
           />
         ) : (
           <>

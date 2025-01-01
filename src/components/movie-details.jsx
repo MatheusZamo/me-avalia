@@ -2,8 +2,16 @@ import { useState } from "react"
 import { StarRating } from "@/components/star-rating"
 import { getMoviePoster } from "@/utils/get-movie-poster"
 
-const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => {
-  const [rating, setRating] = useState(0)
+const MovieDetails = ({
+  clickedMovie,
+  onClickBtnBack,
+  onSubmitRating,
+  watchedMovies,
+}) => {
+  const userRating = watchedMovies.find(
+    (movie) => movie.id === clickedMovie.id,
+  )?.userRating
+  const [rating, setRating] = useState(userRating ?? 0)
 
   const handleRating = (userRating) => setRating(userRating)
 
@@ -33,9 +41,10 @@ const MovieDetails = ({ clickedMovie, onClickBtnBack, onSubmitRating }) => {
             size={26}
             color="#FCC419"
             onRating={handleRating}
+            initialRating={rating}
           />
           <button onClick={() => onSubmitRating(rating)} className="btn-add">
-            Adicionar à lista
+            {userRating ? "Alterar nota" : "+ Adicionar a lista"}
           </button>
         </div>
         <p>
