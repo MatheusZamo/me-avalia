@@ -65,7 +65,8 @@ const StarRating = ({
   const handleMouseOut = () => setTempRating(0)
   const handleMouseIn = (index) => setTempRating(index + 1)
   const handleRating = (index) => {
-    const newRating = index + 1
+    const newRating = rating === index + 1 ? 0 : index + 1
+    setTempRating(newRating)
     setRating(newRating)
     onRating?.(newRating)
   }
