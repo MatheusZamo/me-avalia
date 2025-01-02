@@ -35,6 +35,14 @@ const useMovies = () => {
       return
     }
 
+    const cachedMovie = watchedMovies.find(
+      (movie) => movie.id === currentClickedMovie.id,
+    )
+    if (cachedMovie) {
+      setClickedMovie(cachedMovie)
+      return
+    }
+
     setIsFetchingMoviesDetails(true)
 
     request({
