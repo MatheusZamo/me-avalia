@@ -89,7 +89,7 @@ const StarRating = ({
           />
         ))}
       </ul>
-      <p style={textStyle}>{tempRating || rating || ""}</p>
+      <p style={textStyle}>{tempRating || rating || 0}</p>
     </div>
   )
 }
