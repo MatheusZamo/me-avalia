@@ -44,7 +44,7 @@ const MovieDetails = ({
             initialRating={rating}
           />
           <button onClick={() => onSubmitRating(rating)} className="btn-add">
-            {userRating ? "Alterar nota" : "+ Adicionar a lista"}
+            {userRating >= 0 ? "Alterar nota" : "+ Adicionar a lista"}
           </button>
         </div>
         <p>
